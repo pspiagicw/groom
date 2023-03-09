@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
@@ -32,15 +33,30 @@ func assertFile() {
 	}
 }
 
+func getEnvironmentString(env []string) string {
+
+    var out bytes.Buffer
+    for _ , value := range env {
+
+        out.WriteString(" ")
+        out.WriteString(value)
+
+
+    }
+
+    return out.String()
+}
 func executeTasks(requested []string, tasks map[string]parse.Task) {
 	for _, request := range requested {
 		task, ok := tasks[request]
 
 		if !ok {
-			colorlog.LogError(constants.LOG_PREFIX+" task named %s", request)
+			colorlog.LogError(constants.LOG_PREFIX+"No task named %s", request)
 			os.Exit(1)
 		}
-		fmt.Printf(constants.LOG_PREFIX+" make => %s\n", task.Command)
+        environmentString := getEnvironmentString(task.Environment)
+
+		fmt.Printf(constants.LOG_PREFIX + "%s =>" + environmentString + " %s\n", request , task.Command)
 
 		components := strings.Split(task.Command, " ")
 
@@ -48,10 +64,10 @@ func executeTasks(requested []string, tasks map[string]parse.Task) {
 			colorlog.LogError(constants.LOG_PREFIX+" Command is not provided for task %s", request)
 		}
 
-		err := execute.Execute(components[0], components[1:])
+		err := execute.Execute(components[0], components[1:], task.Environment)
 
 		if err != nil {
-			colorlog.LogError(constants.LOG_PREFIX + " exited with a error.")
+            colorlog.LogError(constants.LOG_PREFIX + " exited with a error:" + err.Error())
 		}
 	}
 }

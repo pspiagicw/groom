@@ -20,5 +20,4 @@ func ParseArguments(VERSION string) []string {
 	requested := flag.Args()
 
 	return requested
-
 }

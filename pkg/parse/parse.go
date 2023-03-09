@@ -12,6 +12,7 @@ type Task struct {
 	Description string   `toml:"description"`
 	Command     string   `toml:"command"`
 	Shell       string   `toml:"shell"`
+    Environment []string `toml:"environment"`
 	Depends     []string `toml:"depends"`
 }
 

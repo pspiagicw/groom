@@ -3,5 +3,11 @@ name = "groom-make"
 [task.build]
 description = "Build the project"
 command = "go build -o groom-make cmd/groom-make/main.go"
+environment = [ "CGO_ENABLED=0" ]
+
+[task.format]
+description = "Format the project"
+
+
 
 
