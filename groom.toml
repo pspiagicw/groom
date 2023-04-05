@@ -1,12 +1,19 @@
 name = "groom-make"
 
+[variables]
+version = "0.1.0"
+build-dir = "build"
+main-file = "cmd/$name/main.go"
+ldflags = "-X main.VERSION='$version'"
+
 [task.build]
 description = "Build the project"
-command = "go build -o groom-make cmd/groom-make/main.go"
+command = 'go build -ldflags "$ldflags" -o $name ${main-file}'
 environment = [ "CGO_ENABLED=0" ]
 
 [task.format]
 description = "Format the project"
+command = "go fmt ./..."
 
 
 
