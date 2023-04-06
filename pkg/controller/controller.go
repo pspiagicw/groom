@@ -77,8 +77,9 @@ func splitCommandString(command string) []string {
 			component := command[startIndex:currentIndex]
 			startIndex = currentIndex + 1
 
-			components = append(components, cleanComponent(component))
-
+			if component != "" {
+				components = append(components, cleanComponent(component))
+			}
 		} else if command[currentIndex] == '\'' {
 			if len(parenStack) == 0 {
 				parenStack = append(parenStack, '\'')
