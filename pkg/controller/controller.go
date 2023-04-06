@@ -129,25 +129,52 @@ func executeTasks(requested []string, tasks map[string]*parse.Task) {
 			os.Exit(1)
 		}
 
-		if task.Command == "" {
-			colorlog.LogError(constants.LOG_PREFIX+"No command specified for %s!", request)
+		if task.Command == "" && len(task.Commands) == 0 {
+			colorlog.LogError(constants.LOG_PREFIX+"No command/commands specified for %s!", request)
 			os.Exit(1)
 		}
+
 		environmentString := getEnvironmentString(task.Environment)
 
-		fmt.Printf(constants.LOG_PREFIX+"%s =>"+environmentString+" %s\n", request, task.Command)
+		if len(task.Commands) != 0 {
+			for _, subtask := range task.Commands {
+				components := splitCommandString(subtask)
+				// fmt.Println(subtask)
 
-		components := splitCommandString(task.Command)
+				if len(components) == 0 {
+					colorlog.LogError(constants.LOG_PREFIX+" Command is not provided for task %s", request)
+				}
+				fmt.Printf(constants.LOG_PREFIX+"%s =>"+environmentString+" %s\n", request, subtask)
 
-		if len(components) == 0 {
-			colorlog.LogError(constants.LOG_PREFIX+" Command is not provided for task %s", request)
-		}
+				// fmt.Println(components)
+				// for _, c := range components {
+				//     fmt.Println(c)
+				// }
+				err := execute.Execute(components[0], components[1:], task.Environment)
 
-		// fmt.Println(components)
-		err := execute.Execute(components[0], components[1:], task.Environment)
+				if err != nil {
+					colorlog.LogError(constants.LOG_PREFIX + " exited with a error: " + err.Error())
+					os.Exit(1)
+				}
 
-		if err != nil {
-			colorlog.LogError(constants.LOG_PREFIX + " exited with a error:" + err.Error())
+			}
+
+		} else {
+			components := splitCommandString(task.Command)
+
+			if len(components) == 0 {
+				colorlog.LogError(constants.LOG_PREFIX+" Command is not provided for task %s", request)
+			}
+
+			fmt.Printf(constants.LOG_PREFIX+"%s =>"+environmentString+" %s\n", request, task.Command)
+
+			// fmt.Println(components)
+			err := execute.Execute(components[0], components[1:], task.Environment)
+
+			if err != nil {
+				colorlog.LogError(constants.LOG_PREFIX + " exited with a error:" + err.Error())
+			}
+
 		}
 	}
 }

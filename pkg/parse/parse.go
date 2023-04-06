@@ -12,6 +12,7 @@ import (
 type Task struct {
 	Description string   `toml:"description"`
 	Command     string   `toml:"command"`
+	Commands    []string `toml:"commands"`
 	Shell       string   `toml:"shell"`
 	Environment []string `toml:"environment"`
 	Depends     []string `toml:"depends"`
@@ -64,7 +65,14 @@ func resolveTasks(c *Config) {
 		newValue := resolveString(task.Command, c)
 		// fmt.Printf("%s has value '%s'\n", name, newValue)
 		c.Section[name].Command = newValue
+
+		for i, subtask := range task.Commands {
+			newValue := resolveString(subtask, c)
+			c.Section[name].Commands[i] = newValue
+
+		}
 	}
+
 }
 
 func resolveVariables(c *Config) {

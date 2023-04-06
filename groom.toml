@@ -2,6 +2,7 @@ name = "groom-make"
 
 [variables]
 version = "0.1.0"
+binary = "groom-make"
 build-dir = "build"
 main-file = "cmd/$name/main.go"
 ldflags = "-X main.VERSION='$version'"
@@ -15,6 +16,13 @@ environment = [ "CGO_ENABLED=0" ]
 description = "Format the project"
 command = "go fmt ./..."
 
+[task.release]
+description = "Compile the binary for project"
+commands = [
+    "go build  -ldflags \"$ldflags\" -o $binary-$version-linux-amd64 ${main-file}",
+    "tar -cvzf  $binary-$version-linux-amd64.tar.gz $binary-$version-linux-amd64"
+]
+environment = [ "CGO_ENABLED=0"]
 
 
 
