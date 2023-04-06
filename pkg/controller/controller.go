@@ -130,6 +130,11 @@ func executeTasks(requested []string, tasks map[string]*parse.Task) {
 			os.Exit(1)
 		}
 
+		if len(task.Depends) != 0 {
+			fmt.Printf(constants.LOG_PREFIX+"Executing dependecies for [%s]\n", request)
+			executeTasks(task.Depends, tasks)
+		}
+
 		if task.Command == "" && len(task.Commands) == 0 {
 			colorlog.LogError(constants.LOG_PREFIX+"No command/commands specified for %s!", request)
 			os.Exit(1)
@@ -140,17 +145,12 @@ func executeTasks(requested []string, tasks map[string]*parse.Task) {
 		if len(task.Commands) != 0 {
 			for _, subtask := range task.Commands {
 				components := splitCommandString(subtask)
-				// fmt.Println(subtask)
 
 				if len(components) == 0 {
 					colorlog.LogError(constants.LOG_PREFIX+" Command is not provided for task %s", request)
 				}
 				fmt.Printf(constants.LOG_PREFIX+"%s =>"+environmentString+" %s\n", request, subtask)
 
-				// fmt.Println(components)
-				// for _, c := range components {
-				//     fmt.Println(c)
-				// }
 				err := execute.Execute(components[0], components[1:], task.Environment)
 
 				if err != nil {

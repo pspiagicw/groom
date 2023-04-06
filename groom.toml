@@ -11,18 +11,24 @@ ldflags = "-X main.VERSION='$version'"
 description = "Build the project"
 command = 'go build -ldflags "$ldflags" -o $name ${main-file}'
 environment = [ "CGO_ENABLED=0" ]
+depends = [
+    "format"
+]
 
 [task.format]
 description = "Format the project"
 command = "go fmt ./..."
 
-[task.release]
-description = "Compile the binary for project"
-commands = [
-    "go build  -ldflags \"$ldflags\" -o $binary-$version-linux-amd64 ${main-file}",
-    "tar -cvzf  $binary-$version-linux-amd64.tar.gz $binary-$version-linux-amd64"
+[task.compile-amd64]
+description = "Compile binary for Linux platform."
+command = "go build  -ldflags \"$ldflags\" -o ${build-dir}/$binary-$version-linux-amd64 ${main-file}"
+environment = [
+    "CGO_ENABLED=0",
+    "GOOS=linux",
+    "GOARCH=amd64",
 ]
-environment = [ "CGO_ENABLED=0"]
 
-
+[task.clean]
+description = "Clean the repository"
+command = "rm -rf ${build-dir}"
 
