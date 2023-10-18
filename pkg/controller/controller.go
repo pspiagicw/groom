@@ -6,11 +6,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
 	"github.com/golang-groom/groom-make/pkg/constants"
 	"github.com/golang-groom/groom-make/pkg/execute"
 	"github.com/golang-groom/groom-make/pkg/parse"
 	"github.com/pspiagicw/colorlog"
+	"github.com/pspiagicw/goreland"
 )
 
 func ExecuteTasks(requests []string) {
@@ -27,8 +27,8 @@ func ExecuteTasks(requests []string) {
 func assertFile() {
 	_, err := os.Stat(constants.TASK_FILE)
 	if err != nil {
-		colorlog.LogError("Error while reading groom.toml: %v\n", err)
-		colorlog.LogError("Make sure the current directory has the `groom.toml` file.\n")
+		goreland.LogError("Error while reading groom.toml: %v\n", err)
+		goreland.LogError("Make sure the current directory has the `groom.toml` file.\n")
 		os.Exit(1)
 	}
 }
@@ -52,14 +52,6 @@ func cleanComponent(component string) string {
 
 }
 func splitCommandString(command string) []string {
-
-	// regex := regexp.MustCompile("")
-	//
-	// components := regex.Split(command, -1)
-	//
-	// return components
-
-	// return strings.Split(command, " ")
 
 	if len(command) == 0 {
 		return []string{}
@@ -113,10 +105,6 @@ func splitCommandString(command string) []string {
 	lastComponent := command[startIndex:currentIndex]
 
 	components = append(components, lastComponent)
-
-	// for _, element := range components {
-	// 	fmt.Println(element)
-	// }
 
 	return components
 
@@ -187,10 +175,11 @@ func listTasks(tasks map[string]*parse.Task) {
 	}
 
 	fmt.Println()
-	fmt.Println(lipgloss.NewStyle().MarginLeft(1).Background(lipgloss.Color("#7e56f4")).Foreground(lipgloss.Color("#ffffff")).Render(" tasks "))
+	// fmt.Println(lipgloss.NewStyle().MarginLeft(1).Background(lipgloss.Color("#7e56f4")).Foreground(lipgloss.Color("#ffffff")).Render(" Tasks "))
+    fmt.Println(" Tasks")
 	fmt.Println()
-	taskStyle := lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("#50fa7b"))
-	descriptionStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#ffb86c"))
+	// taskStyle := lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("#50fa7b"))
+	// descriptionStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#ffb86c"))
 
 	for name, task := range tasks {
 		description := task.Description
@@ -198,7 +187,8 @@ func listTasks(tasks map[string]*parse.Task) {
 		if description != "" {
 			description = "No description provided"
 		}
-		fmt.Println("-" + taskStyle.Render(name) + " : " + descriptionStyle.Render(task.Description))
+		// fmt.Println("-" + taskStyle.Render(name) + ":" + descriptionStyle.Render(task.Description))
+		fmt.Println(" - " + name + ": " + task.Description)
 	}
 
 }
