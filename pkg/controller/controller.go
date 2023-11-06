@@ -9,7 +9,6 @@ import (
 	"github.com/golang-groom/groom-make/pkg/constants"
 	"github.com/golang-groom/groom-make/pkg/execute"
 	"github.com/golang-groom/groom-make/pkg/parse"
-	"github.com/pspiagicw/colorlog"
 	"github.com/pspiagicw/goreland"
 )
 
@@ -28,8 +27,7 @@ func assertFile() {
 	_, err := os.Stat(constants.TASK_FILE)
 	if err != nil {
 		goreland.LogError("Error while reading groom.toml: %v\n", err)
-		goreland.LogError("Make sure the current directory has the `groom.toml` file.\n")
-		os.Exit(1)
+		goreland.LogFatal("Make sure the current directory has the `groom.toml` file.\n")
 	}
 }
 
@@ -114,18 +112,16 @@ func executeTasks(requested []string, tasks map[string]*parse.Task) {
 		task, ok := tasks[request]
 
 		if !ok {
-			colorlog.LogError(constants.LOG_PREFIX+"No task named %s", request)
-			os.Exit(1)
+			goreland.LogFatal("No task named %s", request)
 		}
 
 		if len(task.Depends) != 0 {
-			fmt.Printf(constants.LOG_PREFIX+"Executing dependecies for [%s]\n", request)
+			goreland.LogInfo("Executing dependencies for [%s]", request)
 			executeTasks(task.Depends, tasks)
 		}
 
 		if task.Command == "" && len(task.Commands) == 0 {
-			colorlog.LogError(constants.LOG_PREFIX+"No command/commands specified for %s!", request)
-			os.Exit(1)
+			goreland.LogFatal("No command/commands specified for [%s]!", request)
 		}
 
 		environmentString := getEnvironmentString(task.Environment)
@@ -135,15 +131,14 @@ func executeTasks(requested []string, tasks map[string]*parse.Task) {
 				components := splitCommandString(subtask)
 
 				if len(components) == 0 {
-					colorlog.LogError(constants.LOG_PREFIX+" Command is not provided for task %s", request)
+					goreland.LogFatal("Command is not provided for task %s", request)
 				}
 				fmt.Printf(constants.LOG_PREFIX+"%s =>"+environmentString+" %s\n", request, subtask)
 
 				err := execute.Execute(components[0], components[1:], task.Environment)
 
 				if err != nil {
-					colorlog.LogError(constants.LOG_PREFIX + " exited with a error: " + err.Error())
-					os.Exit(1)
+					goreland.LogError("exited with a error: " + err.Error())
 				}
 
 			}
@@ -152,16 +147,15 @@ func executeTasks(requested []string, tasks map[string]*parse.Task) {
 			components := splitCommandString(task.Command)
 
 			if len(components) == 0 {
-				colorlog.LogError(constants.LOG_PREFIX+" Command is not provided for task %s", request)
+				goreland.LogError("Command is not provided for task %s", request)
 			}
 
 			fmt.Printf(constants.LOG_PREFIX+"%s =>"+environmentString+" %s\n", request, task.Command)
 
-			// fmt.Println(components)
 			err := execute.Execute(components[0], components[1:], task.Environment)
 
 			if err != nil {
-				colorlog.LogError(constants.LOG_PREFIX + " exited with a error:" + err.Error())
+				goreland.LogError("exited with a error:" + err.Error())
 			}
 
 		}
@@ -170,25 +164,18 @@ func executeTasks(requested []string, tasks map[string]*parse.Task) {
 func listTasks(tasks map[string]*parse.Task) {
 
 	if len(tasks) == 0 {
-		colorlog.LogError("No tasks declared.")
-		return
+		goreland.LogFatal("No tasks declared.")
 	}
 
-	fmt.Println()
-	// fmt.Println(lipgloss.NewStyle().MarginLeft(1).Background(lipgloss.Color("#7e56f4")).Foreground(lipgloss.Color("#ffffff")).Render(" Tasks "))
-    fmt.Println(" Tasks")
-	fmt.Println()
-	// taskStyle := lipgloss.NewStyle().PaddingLeft(1).Foreground(lipgloss.Color("#50fa7b"))
-	// descriptionStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#ffb86c"))
+	fmt.Println("Tasks:")
 
 	for name, task := range tasks {
 		description := task.Description
 
-		if description != "" {
+		if description == "" {
 			description = "No description provided"
 		}
-		// fmt.Println("-" + taskStyle.Render(name) + ":" + descriptionStyle.Render(task.Description))
-		fmt.Println(" - " + name + ": " + task.Description)
+		fmt.Printf("\t%s\t\t\t%s\n", name, description)
 	}
 
 }

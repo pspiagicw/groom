@@ -4,16 +4,17 @@ import (
 	"flag"
 	"os"
 
-	"github.com/pspiagicw/colorlog"
+	"github.com/pspiagicw/goreland"
 )
 
 func ParseArguments(VERSION string) []string {
+
 	version := flag.Bool("version", false, "Print version info.")
 
 	flag.Parse()
 
 	if *version {
-		colorlog.LogSuccess("groom-make, Version: %s", VERSION)
+		goreland.LogSuccess("groom-make, Version: %s", VERSION)
 		os.Exit(0)
 	}
 

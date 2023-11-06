@@ -63,7 +63,6 @@ func resolveTasks(c *Config) {
 
 	for name, task := range c.Section {
 		newValue := resolveString(task.Command, c)
-		// fmt.Printf("%s has value '%s'\n", name, newValue)
 		c.Section[name].Command = newValue
 
 		for i, subtask := range task.Commands {
