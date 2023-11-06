@@ -21,7 +21,7 @@ type Task struct {
 type Config struct {
 	Name      string            `toml:"name"`
 	Variables map[string]string `toml:"variables"`
-	Section   map[string]*Task  `toml:"task"`
+	Tasks     map[string]*Task  `toml:"task"`
 }
 
 func ParseConf() *Config {
@@ -56,18 +56,18 @@ func ParseTasks() map[string]*Task {
 
 	resolveTasks(config)
 
-	return config.Section
+	return config.Tasks
 }
 
 func resolveTasks(c *Config) {
 
-	for name, task := range c.Section {
+	for name, task := range c.Tasks {
 		newValue := resolveString(task.Command, c)
-		c.Section[name].Command = newValue
+		c.Tasks[name].Command = newValue
 
 		for i, subtask := range task.Commands {
 			newValue := resolveString(subtask, c)
-			c.Section[name].Commands[i] = newValue
+			c.Tasks[name].Commands[i] = newValue
 
 		}
 	}
