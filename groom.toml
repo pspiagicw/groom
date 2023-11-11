@@ -1,8 +1,7 @@
-name = "groom-make"
+name = "groom"
 
 [variables]
 version = "0.1.0"
-binary = "groom-make"
 build-dir = "build"
 main-file = "cmd/$name/main.go"
 ldflags = "-X main.VERSION='$version'"
