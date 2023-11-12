@@ -169,13 +169,17 @@ func listTasks(tasks map[string]*parse.Task) {
 
 	fmt.Println("Tasks:")
 
+	rows := [][]string{}
+
 	for name, task := range tasks {
 		description := task.Description
 
 		if description == "" {
 			description = "No description provided"
 		}
-		fmt.Printf("\t%s\t\t\t%s\n", name, description)
+		rows = append(rows, []string{name, description})
 	}
 
+	headers := []string{"Name", "Description"}
+	goreland.LogTable(headers, rows)
 }

@@ -3,7 +3,7 @@ name = "groom"
 [variables]
 version = "0.1.0"
 build-dir = "build"
-main-file = "cmd/$name/main.go"
+main-file = "main.go"
 ldflags = "-X main.VERSION='$version'"
 
 [task.build]
