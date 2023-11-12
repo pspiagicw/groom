@@ -1,4 +1,4 @@
-module github.com/golang-groom/groom-make
+module github.com/pspiagicw/groom
 
 go 1.21.0
 

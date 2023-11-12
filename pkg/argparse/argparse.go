@@ -14,7 +14,7 @@ func ParseArguments(VERSION string) []string {
 	flag.Parse()
 
 	if *version {
-		goreland.LogSuccess("groom-make, Version: %s", VERSION)
+		goreland.LogSuccess("groom, Version: %s", VERSION)
 		os.Exit(0)
 	}
 

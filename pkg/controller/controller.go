@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/golang-groom/groom-make/pkg/constants"
-	"github.com/golang-groom/groom-make/pkg/execute"
-	"github.com/golang-groom/groom-make/pkg/parse"
 	"github.com/pspiagicw/goreland"
+	"github.com/pspiagicw/groom/pkg/constants"
+	"github.com/pspiagicw/groom/pkg/execute"
+	"github.com/pspiagicw/groom/pkg/parse"
 )
 
 func ExecuteTasks(requests []string) {

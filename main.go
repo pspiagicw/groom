@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/golang-groom/groom-make/pkg/argparse"
-	"github.com/golang-groom/groom-make/pkg/controller"
+	"github.com/pspiagicw/groom/pkg/argparse"
+	"github.com/pspiagicw/groom/pkg/controller"
 )
 
 var VERSION string
