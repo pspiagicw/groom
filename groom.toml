@@ -23,3 +23,7 @@ command = "go fmt ./..."
 description = "Clean the repository"
 command = "rm -rf ${build-dir}"
 
+[task.install]
+description = "Install the binary(Requires gox)"
+command = "gox install ."
+

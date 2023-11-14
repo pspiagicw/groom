@@ -26,8 +26,8 @@ func ExecuteTasks(requests []string) {
 func assertFile() {
 	_, err := os.Stat(constants.TASK_FILE)
 	if err != nil {
-		goreland.LogError("Error while reading groom.toml: %v\n", err)
-		goreland.LogFatal("Make sure the current directory has the `groom.toml` file.\n")
+		goreland.LogError("Error while reading groom.toml: %v", err)
+		goreland.LogFatal("Make sure the current directory has the `groom.toml` file.")
 	}
 }
 
@@ -177,9 +177,13 @@ func listTasks(tasks map[string]*parse.Task) {
 		if description == "" {
 			description = "No description provided"
 		}
-		rows = append(rows, []string{name, description})
+		deps := strings.Join(task.Depends, ",")
+		if deps == "" {
+			deps = "No dependencies"
+		}
+		rows = append(rows, []string{name, description, deps})
 	}
 
-	headers := []string{"Name", "Description"}
+	headers := []string{"Name", "Description", "Depends"}
 	goreland.LogTable(headers, rows)
 }
