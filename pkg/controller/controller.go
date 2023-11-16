@@ -2,52 +2,42 @@ package controller
 
 import (
 	"bytes"
+	"container/list"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/pspiagicw/goreland"
-	"github.com/pspiagicw/groom/pkg/constants"
 	"github.com/pspiagicw/groom/pkg/execute"
 	"github.com/pspiagicw/groom/pkg/parse"
+	"github.com/pspiagicw/groom/pkg/utils"
+	"github.com/samber/lo"
 )
 
-func ExecuteTasks(requests []string) {
+func PerformTasks(requests []string) {
 
-	assertFile()
-	tasks := parse.ParseTasks()
+	utils.AssertFile()
+
 	if len(requests) == 0 {
-		listTasks(tasks)
-
+		ListTasks()
 	}
-	executeTasks(requests, tasks)
 
-}
-func assertFile() {
-	_, err := os.Stat(constants.TASK_FILE)
-	if err != nil {
-		goreland.LogError("Error while reading groom.toml: %v", err)
-		goreland.LogFatal("Make sure the current directory has the `groom.toml` file.")
-	}
+	executeTasks(requests)
+
 }
 
 func getEnvironmentString(env []string) string {
 
 	var out bytes.Buffer
-	for _, value := range env {
-
+	lo.ForEach(env, func(value string, index int) {
 		out.WriteString(" ")
 		out.WriteString(value)
-
-	}
-
+	})
 	return out.String()
 }
 func cleanComponent(component string) string {
 	component = strings.ReplaceAll(component, "\"", "")
 
 	return component
-
 }
 func splitCommandString(command string) []string {
 
@@ -107,83 +97,57 @@ func splitCommandString(command string) []string {
 	return components
 
 }
-func executeTasks(requested []string, tasks map[string]*parse.Task) {
-	for _, request := range requested {
-		task, ok := tasks[request]
 
-		if !ok {
-			goreland.LogFatal("No task named %s", request)
-		}
+func runTask(environment []string, task string, name string) {
+	components := splitCommandString(task)
 
-		if len(task.Depends) != 0 {
-			goreland.LogInfo("Executing dependencies for [%s]", request)
-			executeTasks(task.Depends, tasks)
-		}
+	if len(components) == 0 {
+		goreland.LogFatal("Command is not provided for task [%s]", name)
+	}
 
-		if task.Command == "" && len(task.Commands) == 0 {
-			goreland.LogFatal("No command/commands specified for [%s]!", request)
-		}
+	logTask(environment, task, name)
 
-		environmentString := getEnvironmentString(task.Environment)
+	execute.Execute(components[0], components[1:], environment)
+
+}
+
+func logTask(environment []string, task string, name string) {
+	environmentString := getEnvironmentString(environment)
+
+	fmt.Printf(utils.LOG_PREFIX+"%s =>"+environmentString+" %s\n", name, task)
+}
+
+func checkTask(request string, tasks map[string]*parse.Task) *parse.Task {
+	task, ok := tasks[request]
+
+	if !ok {
+		goreland.LogFatal("No task named %s", request)
+	}
+
+	if task.Command == "" && len(task.Commands) == 0 {
+		goreland.LogFatal("No command/commands specified for [%s]!", request)
+	}
+	return task
+
+}
+func executeTasks(requested []string) {
+
+	tasks := parse.ParseTasks()
+
+	lo.ForEach(requested, func(request string, index int) {
+
+		task := checkTask(request, tasks)
+
+		goreland.LogInfo("Executing dependencies for [%s]", request)
+
+		executeTasks(task.Depends)
 
 		if len(task.Commands) != 0 {
-			for _, subtask := range task.Commands {
-				components := splitCommandString(subtask)
-
-				if len(components) == 0 {
-					goreland.LogFatal("Command is not provided for task %s", request)
-				}
-				fmt.Printf(constants.LOG_PREFIX+"%s =>"+environmentString+" %s\n", request, subtask)
-
-				err := execute.Execute(components[0], components[1:], task.Environment)
-
-				if err != nil {
-					goreland.LogError("exited with a error: " + err.Error())
-				}
-
-			}
-
+			lo.ForEach(task.Commands, func(item string, index int) {
+				runTask(task.Environment, item, request)
+			})
 		} else {
-			components := splitCommandString(task.Command)
-
-			if len(components) == 0 {
-				goreland.LogError("Command is not provided for task %s", request)
-			}
-
-			fmt.Printf(constants.LOG_PREFIX+"%s =>"+environmentString+" %s\n", request, task.Command)
-
-			err := execute.Execute(components[0], components[1:], task.Environment)
-
-			if err != nil {
-				goreland.LogError("exited with a error:" + err.Error())
-			}
-
+			runTask(task.Environment, task.Command, request)
 		}
-	}
-}
-func listTasks(tasks map[string]*parse.Task) {
-
-	if len(tasks) == 0 {
-		goreland.LogFatal("No tasks declared.")
-	}
-
-	fmt.Println("Tasks:")
-
-	rows := [][]string{}
-
-	for name, task := range tasks {
-		description := task.Description
-
-		if description == "" {
-			description = "No description provided"
-		}
-		deps := strings.Join(task.Depends, ",")
-		if deps == "" {
-			deps = "No dependencies"
-		}
-		rows = append(rows, []string{name, description, deps})
-	}
-
-	headers := []string{"Name", "Description", "Depends"}
-	goreland.LogTable(headers, rows)
+	})
 }

@@ -3,9 +3,11 @@ package execute
 import (
 	"os"
 	"os/exec"
+
+	"github.com/pspiagicw/goreland"
 )
 
-func Execute(command string, args []string, env []string) error {
+func Execute(command string, args []string, env []string) {
 
 	cmd := exec.Command(command, args...)
 	// fmt.Println(arg)
@@ -16,5 +18,7 @@ func Execute(command string, args []string, env []string) error {
 
 	err := cmd.Run()
 
-	return err
+	if err != nil {
+		goreland.LogFatal("Proccess exited with a error: %v", err)
+	}
 }

@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/BurntSushi/toml"
-	"github.com/pspiagicw/groom/pkg/constants"
+	"github.com/pspiagicw/groom/pkg/utils"
 )
 
 type Task struct {
@@ -26,7 +26,7 @@ type Config struct {
 
 func ParseConf() *Config {
 
-	config, err := os.Open(constants.TASK_FILE)
+	config, err := os.Open(utils.TASK_FILE)
 
 	if err != nil {
 		log.Fatalf("Error reading goproject.toml: %q", err)
@@ -77,7 +77,6 @@ func resolveTasks(c *Config) {
 func resolveVariables(c *Config) {
 	for name, value := range c.Variables {
 		newValue := resolveString(value, c)
-		// fmt.Printf("%s has value '%s'\n", name, newValue)
 		c.Variables[name] = newValue
 	}
 }

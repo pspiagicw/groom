@@ -8,8 +8,6 @@ import (
 var VERSION string
 
 func main() {
-
 	requestedTasks := argparse.ParseArguments(VERSION)
-	controller.ExecuteTasks(requestedTasks)
-
+	controller.PerformTasks(requestedTasks)
 }

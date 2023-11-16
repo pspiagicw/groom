@@ -26,4 +26,7 @@ command = "rm -rf ${build-dir}"
 [task.install]
 description = "Install the binary(Requires gox)"
 command = "gox install ."
+depends = [
+    "build"
+]
 
