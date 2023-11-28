@@ -50,6 +50,8 @@ func ParseConf() *Config {
 }
 func ParseTasks() map[string]*Task {
 
+	utils.AssertFile()
+
 	config := ParseConf()
 
 	resolveVariables(config)
