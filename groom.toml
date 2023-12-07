@@ -29,4 +29,3 @@ command = "gox install ."
 depends = [
     "build"
 ]
-
