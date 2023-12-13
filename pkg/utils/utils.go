@@ -15,6 +15,7 @@ func AssertFile() {
 	_, err := os.Stat(TASK_FILE)
 	if err != nil {
 		goreland.LogError("Error while reading groom.toml: %v", err)
+		goreland.LogInfo("If you need more information regarding the groom.toml file, run `groom help`")
 		goreland.LogFatal("Make sure the current directory has the `groom.toml` file.")
 	}
 }
