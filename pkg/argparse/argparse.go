@@ -5,13 +5,19 @@ import (
 	"github.com/pspiagicw/groom/pkg/helper"
 )
 
-func ParseArguments(version string) []string {
+type Opts struct {
+	SimpleListing bool
+}
+
+func ParseArguments(version string) ([]string, *Opts) {
 
 	PrintHelp := func() {
 		helper.PrintHelp(version)
 	}
+	opts := new(Opts)
 
+	flag.BoolVar(&opts.SimpleListing, "simple", false, "Print simple listing")
 	flag.Usage = PrintHelp
 	flag.Parse()
-	return flag.Args()
+	return flag.Args(), opts
 }

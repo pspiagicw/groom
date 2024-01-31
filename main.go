@@ -8,6 +8,6 @@ import (
 var VERSION string
 
 func main() {
-	args := argparse.ParseArguments(VERSION)
-	handler.HandleArgs(args, VERSION)
+	args, opts := argparse.ParseArguments(VERSION)
+	handler.HandleArgs(args, VERSION, opts)
 }

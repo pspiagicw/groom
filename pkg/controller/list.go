@@ -5,10 +5,11 @@ import (
 	"strings"
 
 	"github.com/pspiagicw/goreland"
+	"github.com/pspiagicw/groom/pkg/argparse"
 	"github.com/pspiagicw/groom/pkg/parse"
 )
 
-func ListTasks() {
+func ListTasks(opts *argparse.Opts) {
 
 	tasks := parse.ParseTasks()
 
@@ -16,7 +17,17 @@ func ListTasks() {
 		goreland.LogFatal("No tasks declared.")
 	}
 
-	printTaskTable(tasks)
+	if !opts.SimpleListing {
+		printTaskTable(tasks)
+	} else {
+		printTaskList(tasks)
+	}
+}
+
+func printTaskList(tasks map[string]*parse.Task) {
+	for name, _ := range tasks {
+		fmt.Println(name)
+	}
 }
 
 func printTaskTable(tasks map[string]*parse.Task) {
