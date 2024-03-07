@@ -6,39 +6,39 @@ import (
 
 	"github.com/pspiagicw/goreland"
 	"github.com/pspiagicw/groom/pkg/argparse"
-	"github.com/pspiagicw/groom/pkg/parse"
+	"github.com/pspiagicw/groom/pkg/config"
 )
 
 func ListTasks(opts *argparse.Opts) {
 
-	tasks := parse.ParseTasks()
+	groomConfig := config.ParseConfig()
 
-	if len(tasks) == 0 {
+	if len(groomConfig.Tasks) == 0 {
 		goreland.LogFatal("No tasks declared.")
 	}
 
 	if !opts.SimpleListing {
-		printTaskTable(tasks)
+		printTaskTable(groomConfig.Tasks)
 	} else {
-		printTaskList(tasks)
+		printTaskList(groomConfig.Tasks)
 	}
 }
 
-func printTaskList(tasks map[string]*parse.Task) {
-	for name, _ := range tasks {
+func printTaskList(taskList map[string]*config.Task) {
+	for name, _ := range taskList {
 		fmt.Println(name)
 	}
 }
 
-func printTaskTable(tasks map[string]*parse.Task) {
+func printTaskTable(taskList map[string]*config.Task) {
 	fmt.Println("Tasks:")
 	headers := []string{"Name", "Description", "Depends"}
-	rows := buildRows(tasks)
+	rows := buildRows(taskList)
 	goreland.LogTable(headers, rows)
 
 }
 
-func buildRows(tasks map[string]*parse.Task) [][]string {
+func buildRows(tasks map[string]*config.Task) [][]string {
 	rows := [][]string{}
 
 	for name, task := range tasks {
@@ -47,10 +47,12 @@ func buildRows(tasks map[string]*parse.Task) [][]string {
 		if description == "" {
 			description = "No description provided"
 		}
+
 		deps := strings.Join(task.Depends, ",")
 		if deps == "" {
 			deps = "No dependencies"
 		}
+
 		rows = append(rows, []string{name, description, deps})
 	}
 

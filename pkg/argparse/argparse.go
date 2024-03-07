@@ -10,6 +10,7 @@ type Opts struct {
 	Args          []string
 	Version       string
 	ExampleConfig bool
+	DryRun        bool
 }
 
 func ParseArguments(version string) *Opts {
@@ -21,6 +22,7 @@ func ParseArguments(version string) *Opts {
 
 	flag.BoolVar(&opts.SimpleListing, "simple", false, "Print simple listing")
 	flag.BoolVar(&opts.ExampleConfig, "example-config", false, "Print example config")
+	flag.BoolVar(&opts.DryRun, "dry-run", false, "Dry run comands.")
 	flag.Usage = PrintHelp
 	flag.Parse()
 	opts.Version = version

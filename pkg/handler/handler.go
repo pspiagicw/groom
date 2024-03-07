@@ -28,7 +28,7 @@ func handleCmd(opts *argparse.Opts) {
 	cmd := opts.Args[0]
 	handleCmd, ok := handlers[cmd]
 	if !ok {
-		tasks.PerformTasks(opts.Args)
+		tasks.PerformTasks(opts.Args, opts.DryRun)
 	} else {
 		handleCmd(opts)
 	}

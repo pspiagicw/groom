@@ -2,19 +2,19 @@ package tasks
 
 import (
 	"github.com/pspiagicw/goreland"
-	"github.com/pspiagicw/groom/pkg/parse"
+	"github.com/pspiagicw/groom/pkg/config"
 )
 
-func PerformTasks(requests []string) {
+func PerformTasks(tasks []string, dryRun bool) {
 
-	taskFile := parse.ParseTasks()
+	groomConfig := config.ParseConfig()
 
-	executeTasks(requests, taskFile)
+	executeTasks(tasks, groomConfig.Tasks, dryRun)
 }
 
-func checkTask(task *parse.Task, request string) {
+func checkTask(task *config.Task) {
 	if task.Command == "" && len(task.Commands) == 0 {
-		goreland.LogFatal("No command/commands specified for [%s]!", request)
+		goreland.LogFatal("No command/commands specified for [%s]!", task.Name)
 	}
 
 	if len(task.Commands) == 0 {
@@ -24,35 +24,27 @@ func checkTask(task *parse.Task, request string) {
 	}
 }
 
-func getTask(request string, tasks map[string]*parse.Task) *parse.Task {
+func getTask(name string, tasks map[string]*config.Task) *config.Task {
 
-	task, ok := tasks[request]
+	task, ok := tasks[name]
+
 	if !ok {
-		goreland.LogFatal("No task named %s", request)
+		goreland.LogFatal("No task named %s", name)
 	}
 
-	checkTask(task, request)
+	checkTask(task)
 	return task
 
 }
 
-func runDependencies(request string, task *parse.Task, taskFile map[string]*parse.Task) {
-	goreland.LogInfo("Executing dependencies for [%s]", request)
-	executeTasks(task.Depends, taskFile)
-}
-
-func executeTasks(tasks []string, taskFile map[string]*parse.Task) {
-
+func executeTasks(tasks []string, taskList map[string]*config.Task, dryRun bool) {
 	for _, name := range tasks {
-		task := getTask(name, taskFile)
-		runDependencies(name, task, taskFile)
-		runCommands(task, name)
+		task := getTask(name, taskList)
+		if !dryRun {
+			runDependencies(task, taskList)
+			runCommands(task)
+		} else {
+			logTask(task)
+		}
 	}
-}
-
-func runCommands(task *parse.Task, name string) {
-	for _, command := range task.Commands {
-		runCommand(task.Environment, command, name)
-	}
-
 }

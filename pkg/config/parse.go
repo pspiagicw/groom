@@ -1,4 +1,4 @@
-package parse
+package config
 
 import (
 	"bytes"
@@ -16,6 +16,7 @@ type Task struct {
 	Shell       string   `toml:"shell"`
 	Environment []string `toml:"environment"`
 	Depends     []string `toml:"depends"`
+	Name        string
 }
 
 type Config struct {
@@ -24,7 +25,7 @@ type Config struct {
 	Tasks     map[string]*Task  `toml:"task"`
 }
 
-func ParseConf() *Config {
+func readConf() *Config {
 
 	config, err := os.Open(utils.TASK_FILE)
 
@@ -48,22 +49,23 @@ func ParseConf() *Config {
 	return &read
 
 }
-func ParseTasks() map[string]*Task {
+func ParseConfig() *Config {
 
 	utils.AssertFile()
 
-	config := ParseConf()
+	config := readConf()
 
 	resolveVariables(config)
 
 	resolveTasks(config)
 
-	return config.Tasks
+	return config
 }
 
 func resolveTasks(c *Config) {
 
 	for name, task := range c.Tasks {
+		task.Name = name
 		newValue := resolveString(task.Command, c)
 		c.Tasks[name].Command = newValue
 

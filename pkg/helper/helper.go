@@ -56,8 +56,19 @@ func PrintHelp(version string) {
 	fmt.Println("A simple task runner")
 	fmt.Println()
 	fmt.Println("USAGE")
-	fmt.Println("  groom [flags] [tasks]")
+	fmt.Println("  groom [flags] [tasks/commands]")
 	fmt.Println()
+	fmt.Println("FLAGS")
+	flags := `
+--example-config:
+--simple:
+--dry-run:`
+	descriptions := `
+Dump example config.
+List tasks without table
+Dry run tasks`
+
+	printAligned(flags, descriptions)
 	fmt.Println("COMMANDS")
 	commands := `
 version:
@@ -65,16 +76,22 @@ help:`
 	messages := `
 Show version info
 Show this message`
+	printAligned(commands, messages)
 
-	commandCol := lipgloss.NewStyle().Align(lipgloss.Left).SetString(commands).MarginLeft(2).String()
-	messageCol := lipgloss.NewStyle().Align(lipgloss.Left).SetString(messages).MarginLeft(5).String()
-
-	fmt.Println(lipgloss.JoinHorizontal(lipgloss.Bottom, commandCol, messageCol))
 	fmt.Println()
 	// taskHelp()
 	fmt.Println("MORE HELP")
 	fmt.Println("  Use 'groom help tasks' for more info about the task format")
 	fmt.Println("  For more information visit https://github.com/pspiagicw/groom")
+}
+
+func printAligned(left string, right string) {
+	leftCol := lipgloss.NewStyle().Align(lipgloss.Left).SetString(left).MarginLeft(2).String()
+	rightCol := lipgloss.NewStyle().Align(lipgloss.Left).SetString(right).MarginLeft(5).String()
+
+	fmt.Println(lipgloss.JoinHorizontal(lipgloss.Bottom, leftCol, rightCol))
+	fmt.Println()
+
 }
 
 func PrintVersion(version string) {
