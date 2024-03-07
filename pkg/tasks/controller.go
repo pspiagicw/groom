@@ -1,4 +1,4 @@
-package controller
+package tasks
 
 import (
 	"bytes"
@@ -17,7 +17,6 @@ func PerformTasks(requests []string) {
 	taskFile := parse.ParseTasks()
 
 	executeTasks(requests, taskFile)
-
 }
 
 func getEnvironmentString(env []string) string {

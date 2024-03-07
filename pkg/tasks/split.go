@@ -1,4 +1,4 @@
-package controller
+package tasks
 
 func splitCommandString(command string) []string {
 
