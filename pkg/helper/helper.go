@@ -50,14 +50,15 @@ func HandleHelp(args []string, version string) {
 
 	}
 }
-
-func PrintHelp(version string) {
-	PrintVersion(version)
+func printUsage() {
 	fmt.Println("A simple task runner")
 	fmt.Println()
 	fmt.Println("USAGE")
 	fmt.Println("  groom [flags] [tasks/commands]")
 	fmt.Println()
+}
+
+func printFlags() {
 	fmt.Println("FLAGS")
 	flags := `
 --example-config:
@@ -69,6 +70,8 @@ List tasks without table
 Dry run tasks`
 
 	printAligned(flags, descriptions)
+}
+func printCommands() {
 	fmt.Println("COMMANDS")
 	commands := `
 version:
@@ -78,11 +81,19 @@ Show version info
 Show this message`
 	printAligned(commands, messages)
 
-	fmt.Println()
-	// taskHelp()
+}
+func printFooter() {
 	fmt.Println("MORE HELP")
 	fmt.Println("  Use 'groom help tasks' for more info about the task format")
 	fmt.Println("  For more information visit https://github.com/pspiagicw/groom")
+}
+
+func PrintHelp(version string) {
+	PrintVersion(version)
+	printUsage()
+	printFlags()
+	printCommands()
+	printFooter()
 }
 
 func printAligned(left string, right string) {
