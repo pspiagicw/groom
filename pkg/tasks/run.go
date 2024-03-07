@@ -1,6 +1,26 @@
 package tasks
 
-func splitCommandString(command string) []string {
+import (
+	"strings"
+
+	"github.com/pspiagicw/goreland"
+	"github.com/pspiagicw/groom/pkg/execute"
+)
+
+func runCommand(environment []string, task string, name string) {
+	components := splitCommand(task)
+
+	if len(components) == 0 {
+		goreland.LogFatal("Command is not provided for task [%s]", name)
+	}
+
+	logTask(environment, task, name)
+
+	execute.Execute(components[0], components[1:], environment)
+
+}
+
+func splitCommand(command string) []string {
 
 	if len(command) == 0 {
 		return []string{}
@@ -57,4 +77,9 @@ func splitCommandString(command string) []string {
 
 	return components
 
+}
+func cleanComponent(component string) string {
+	component = strings.ReplaceAll(component, "\"", "")
+
+	return component
 }
