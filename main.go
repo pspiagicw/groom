@@ -5,9 +5,9 @@ import (
 	"github.com/pspiagicw/groom/pkg/handler"
 )
 
-var VERSION string
+var VERSION string = "unversioned"
 
 func main() {
-	args, opts := argparse.ParseArguments(VERSION)
-	handler.HandleArgs(args, VERSION, opts)
+	opts := argparse.ParseArguments(VERSION)
+	handler.HandleArgs(opts)
 }

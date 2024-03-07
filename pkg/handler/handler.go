@@ -1,32 +1,37 @@
 package handler
 
 import (
-	"os"
-
+	"github.com/pspiagicw/goreland"
 	"github.com/pspiagicw/groom/pkg/argparse"
 	"github.com/pspiagicw/groom/pkg/controller"
 	"github.com/pspiagicw/groom/pkg/helper"
 )
 
-var handlers = map[string]func(string){
-	"version": helper.PrintVersion,
-	"help":    helper.PrintHelp,
+var handlers = map[string]func(*argparse.Opts){
+	"version": func(opts *argparse.Opts) {
+		helper.PrintVersion(opts.Version)
+	},
+	"help": func(opts *argparse.Opts) {
+		helper.HandleHelp(opts.Args[1:], opts.Version)
+	},
 }
 
-func HandleArgs(args []string, version string, opts *argparse.Opts) {
+func HandleArgs(opts *argparse.Opts) {
 
-	if len(args) == 0 {
+	if opts.ExampleConfig {
+		helper.PrintExampleConfig()
+
+	} else if len(opts.Args) == 0 {
 		controller.ListTasks(opts)
-		os.Exit(0)
-	}
-
-	cmd := args[0]
-
-	handlerFunc, exists := handlers[cmd]
-
-	if !exists {
-		controller.PerformTasks(args)
 	} else {
-		handlerFunc(version)
+		cmd := opts.Args[0]
+
+		handleCmd, ok := handlers[cmd]
+
+		if !ok {
+			goreland.LogFatal("No such command")
+		}
+
+		handleCmd(opts)
 	}
 }

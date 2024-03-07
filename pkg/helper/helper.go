@@ -6,8 +6,52 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const exampleConfig string = `
+name = "example-project"
+
+[variables]
+version = "0.0.1"
+
+# Tasks start with '[task.<task-name>]'
+# They should contain, 'command' property.
+# Other fields are optional.
+[task.build]
+description = "Build the project."
+command = "go build ."
+
+# Tasks can contain 'commands' as a list of commands.
+[task.run]
+commands = [
+    "go run main.go",
+    "python -m exaple-project",
+]
+
+# Tasks can contain dependencies, and environment variables defined
+[task.test]
+environment = [ "TESTS=1" ]
+command = "python -m unittest"
+depends = [
+    "format"
+]
+
+[task.format]
+commands = "go fmt ./..."
+`
+
+func HandleHelp(args []string, version string) {
+	if len(args) == 0 {
+		PrintHelp(version)
+	} else {
+		arg := args[0]
+		switch arg {
+		case "tasks":
+			taskHelp()
+		}
+
+	}
+}
+
 func PrintHelp(version string) {
-	// goreland.LogError("Help printing not implemented yet!")
 	PrintVersion(version)
 	fmt.Println("A simple task runner")
 	fmt.Println()
@@ -36,6 +80,7 @@ Show this message`
 func PrintVersion(version string) {
 	fmt.Printf("groom version: %s\n", version)
 }
+
 func taskHelp() {
 	fmt.Println("Task Format")
 	fmt.Println("The task are difined in the `groom.toml` file")
@@ -46,4 +91,8 @@ func taskHelp() {
 	fmt.Println("command=\"echo Go rocks!\"")
 	fmt.Println()
 	fmt.Println("groom supports many more awesome features. Run `groom --example-config` to explore")
+}
+func PrintExampleConfig() {
+	fmt.Println()
+	fmt.Println(exampleConfig)
 }
