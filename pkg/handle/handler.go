@@ -1,23 +1,23 @@
-package handler
+package handle
 
 import (
 	"github.com/pspiagicw/groom/pkg/argparse"
-	"github.com/pspiagicw/groom/pkg/helper"
+	"github.com/pspiagicw/groom/pkg/help"
 	"github.com/pspiagicw/groom/pkg/tasks"
 )
 
 var handlers = map[string]func(*argparse.Opts){
 	"version": func(opts *argparse.Opts) {
-		helper.PrintVersion(opts.Version)
+		help.PrintVersion(opts.Version)
 	},
 	"help": func(opts *argparse.Opts) {
-		helper.HandleHelp(opts.Args[1:], opts.Version)
+		help.HandleHelp(opts.Args[1:], opts.Version)
 	},
 }
 
 func HandleArgs(opts *argparse.Opts) {
 	if opts.ExampleConfig {
-		helper.PrintExampleConfig()
+		help.PrintExampleConfig()
 	} else if len(opts.Args) == 0 {
 		tasks.ListTasks(opts)
 	} else {

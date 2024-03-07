@@ -2,7 +2,7 @@ package argparse
 
 import (
 	"flag"
-	"github.com/pspiagicw/groom/pkg/helper"
+	"github.com/pspiagicw/groom/pkg/help"
 )
 
 type Opts struct {
@@ -16,7 +16,7 @@ type Opts struct {
 func ParseArguments(version string) *Opts {
 
 	PrintHelp := func() {
-		helper.PrintHelp(version)
+		help.PrintHelp(version)
 	}
 	opts := new(Opts)
 

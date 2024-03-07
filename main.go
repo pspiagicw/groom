@@ -2,12 +2,12 @@ package main
 
 import (
 	"github.com/pspiagicw/groom/pkg/argparse"
-	"github.com/pspiagicw/groom/pkg/handler"
+	"github.com/pspiagicw/groom/pkg/handle"
 )
 
 var VERSION string = "unversioned"
 
 func main() {
 	opts := argparse.ParseArguments(VERSION)
-	handler.HandleArgs(opts)
+	handle.HandleArgs(opts)
 }
