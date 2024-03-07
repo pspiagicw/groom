@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Help Printing.
 - Added a `--simple` flag to task listing.
 - Added parent directory recursion. `groom` now finds `groom.toml` in the parent directories.
-- Created a companion `neovim` plugin
+- Created a companion `neovim` plugin. See [here](https://github.com/pspiagicw/groom.nvim)
 
 ## [0.0.1] - 2023-11-16
 

@@ -38,11 +38,15 @@ description = "Format the project"
 command = "go fmt ./..."
 ```
 
+![help](./gifs/help.gif)
+
 ### List
 
 Run `groom` without any arguments to list all declared tasks.
 - List all tasks with their dependencies, and description.
 - Use `--simple` to list all tasks without any beautification. Useful with scripts.
+
+![list](./gifs/list.gif)
 
 ### Executing tasks
 
@@ -50,8 +54,12 @@ Provide a list of tasks to execute and watch `groom` execute them!
 
 - Will automatically run dependencies.
 
+![build](./gifs/build.gif)
+
 ### Neovim Plugin
 
 A `neovim` plugin is in the works for integrating `groom` with Neovim.
 It automatically lists all the tasks and adds the output to the quickfix list.
+
+![plugin](./gifs/plugin.gif)
 
