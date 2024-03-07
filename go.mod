@@ -4,6 +4,7 @@ go 1.21.0
 
 require (
 	github.com/BurntSushi/toml v1.2.1
+	github.com/adrg/xdg v0.4.0
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/pspiagicw/goreland v0.0.0-20231114040425-9e1a4343f6f4
 )

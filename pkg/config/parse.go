@@ -27,7 +27,7 @@ type Config struct {
 
 func readConf() *Config {
 
-	config, err := os.Open(utils.TASK_FILE)
+	config, err := os.Open(utils.ConfigFilePath())
 
 	if err != nil {
 		log.Fatalf("Error reading goproject.toml: %q", err)
@@ -50,8 +50,6 @@ func readConf() *Config {
 
 }
 func ParseConfig() *Config {
-
-	utils.AssertFile()
 
 	config := readConf()
 
