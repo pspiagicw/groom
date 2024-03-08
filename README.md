@@ -2,6 +2,18 @@
 
 `groom` is a yet another os-agnostic task runner.
 
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [`groom`](#-groom)
+   * [Features](#-features)
+   * [Functionality](#functionality)
+      + [Config file](#config-file)
+      + [List](#list)
+      + [Executing tasks](#executing-tasks)
+      + [Neovim Plugin](#neovim-plugin)
+   * [Contributing](#contributing)
+
+<!-- TOC end -->
 ## ✨ Features
 
 - 🔥 Task runner with a simple yet powerful toml syntax
