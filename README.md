@@ -1,4 +1,4 @@
-# 🧹`groom`
+# 🧹 `groom`
 
 `groom` is a yet another os-agnostic task runner.
 
