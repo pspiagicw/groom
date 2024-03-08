@@ -13,7 +13,7 @@
 ### Config file
 
 - Requires a simple `groom.toml` file in the project root.
-- `groom` should automatically find a `groom.toml` file in the parent directory.
+- `groom` automatically recurses to the project root to find a `groom.toml` file.
 - A global `[variables]` section for user variables.
 - They support inline variable substition.
 
@@ -49,14 +49,15 @@ depends = [
 commands = "go fmt ./..."
 ```
 
+> You can run `groom --example-config` to get a working example config.
+
 ![help](./gifs/help.gif)
 
 ### List
 
-Run `groom` without any arguments to list all declared tasks.
+Run `groom` without any arguments to list all configured tasks.
 
-- List all tasks with their dependencies, and description.
-- Use `--simple` to list all tasks without any beautification. Useful with scripts.
+> Use `--simple` to list all tasks without any fancy printing. Useful with scripts.
 
 ![list](./gifs/list.gif)
 
@@ -64,15 +65,17 @@ Run `groom` without any arguments to list all declared tasks.
 
 Provide a list of tasks to execute and watch `groom` execute them!
 
-- Run dependencies automatically.
-- Use the `--dry-run` argument to show the log without actually running anything.
+>  Use the `--dry-run` argument to show the log without actually running anything.
 
 ![build](./gifs/build.gif)
 
 ### Neovim Plugin
 
 A `neovim` plugin is in the works for integrating `groom` with Neovim.
-It automatically lists all the tasks and adds the output to the quickfix list.
+
+It allows you to run tasks without leaving your editor.
+
+> Find it [here](https://github.com/pspiagicw/groom.nvim)
 
 ![plugin](./gifs/plugin.gif)
 
