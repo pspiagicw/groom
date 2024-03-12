@@ -35,7 +35,7 @@ depends = [
 ]
 
 [task.format]
-commands = "go fmt ./..."
+command = "go fmt ./..."
 `
 
 func HandleHelp(args []string, version string) {
