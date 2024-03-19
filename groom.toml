@@ -4,7 +4,7 @@ name = "groom"
 version = "0.1.1"
 build-dir = "build"
 main-file = "main.go"
-ldflags = "-X main.VERSION='$version'"
+ldflags = "-X main.VERSION=$version"
 
 [task.build]
 description = "Build the project"
