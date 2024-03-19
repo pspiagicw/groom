@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/BurntSushi/toml"
+	"github.com/pspiagicw/goreland"
 	"github.com/pspiagicw/groom/pkg/utils"
 )
 
@@ -81,7 +82,16 @@ func resolveVariables(c *Config) {
 		newValue := resolveString(value, c)
 		c.Variables[name] = newValue
 	}
+	addDefaultVariables(c)
 }
+func addDefaultVariables(c *Config) {
+	curDir, err := os.Getwd()
+	if err != nil {
+		goreland.LogFatal("Error getting current directory: %q", err)
+	}
+	c.Variables["pwd"] = curDir
+}
+
 func resolveString(content string, config *Config) string {
 
 	var out bytes.Buffer
