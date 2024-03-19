@@ -29,3 +29,7 @@ command = "gox install ."
 depends = [
     "build"
 ]
+
+[task.doc]
+description = "Build documentation"
+command = "docker run --rm -v ${pwd} :/work --user 1000:1000 pspiagicw/doc-generator"

@@ -58,7 +58,7 @@ depends = [
 ]
 
 [task.format]
-commands = "go fmt ./..."
+command = "go fmt ./..."
 ```
 
 > You can run `groom --example-config` to get a working example config.
