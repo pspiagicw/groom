@@ -1,11 +1,11 @@
 package config
 
 import (
-	"bytes"
 	"log"
 	"os"
 
 	"github.com/BurntSushi/toml"
+	"github.com/pspiagicw/demp"
 	"github.com/pspiagicw/goreland"
 	"github.com/pspiagicw/groom/pkg/utils"
 )
@@ -65,11 +65,11 @@ func resolveTasks(c *Config) {
 
 	for name, task := range c.Tasks {
 		task.Name = name
-		newValue := resolveString(task.Command, c)
+		newValue := demp.ResolveTemplate(task.Command, c.Variables)
 		c.Tasks[name].Command = newValue
 
 		for i, subtask := range task.Commands {
-			newValue := resolveString(subtask, c)
+			newValue := demp.ResolveTemplate(subtask, c.Variables)
 			c.Tasks[name].Commands[i] = newValue
 
 		}
@@ -78,86 +78,22 @@ func resolveTasks(c *Config) {
 }
 
 func resolveVariables(c *Config) {
+
+	// Add the name as a variable
+	c.Variables["name"] = c.Name
+	// Add other default variables
+	addDefaultVariables(c)
+
 	for name, value := range c.Variables {
-		newValue := resolveString(value, c)
+		newValue := demp.ResolveTemplate(value, c.Variables)
 		c.Variables[name] = newValue
 	}
-	addDefaultVariables(c)
 }
+
 func addDefaultVariables(c *Config) {
 	curDir, err := os.Getwd()
 	if err != nil {
 		goreland.LogFatal("Error getting current directory: %q", err)
 	}
 	c.Variables["pwd"] = curDir
-}
-
-func resolveString(content string, config *Config) string {
-
-	var out bytes.Buffer
-
-	for i := 0; i < len(content); i++ {
-		if content[i] == '$' {
-			startIndex := i + 1
-			currentIndex := i + 1
-			if content[currentIndex] == '{' {
-				for currentIndex < len(content) {
-					if content[currentIndex] != '}' {
-						currentIndex += 1
-					} else {
-						break
-					}
-				}
-
-				token := content[startIndex+1 : currentIndex]
-
-				if token == "name" {
-					out.WriteString(config.Name)
-					break
-				}
-
-				value, exists := config.Variables[token]
-
-				if !exists {
-					log.Printf("Token '%s' does not exist within variables.", token)
-				}
-				out.WriteString(value)
-				i = currentIndex + 1
-			} else {
-				for currentIndex < len(content) {
-					if isLetter(content[currentIndex]) {
-						currentIndex += 1
-					} else {
-						break
-					}
-				}
-				token := content[startIndex:currentIndex]
-
-				// fmt.Printf("Extracted token: %s\n", token)
-
-				if token == "name" {
-					out.WriteString(config.Name)
-					i = currentIndex - 1
-				} else {
-					value, exists := config.Variables[token]
-
-					if !exists {
-						log.Printf("Token '%s' does not exist within variables.", token)
-					}
-					out.WriteString(value)
-					i = currentIndex - 1
-					// fmt.Printf("%d is the position, total length: %d\n", i, len(content))
-				}
-
-			}
-		} else {
-			out.WriteByte(content[i])
-		}
-	}
-
-	return out.String()
-}
-
-func isLetter(element byte) bool {
-	return ('a' <= element && element <= 'z') || ('A' <= element && element <= 'Z')
 }

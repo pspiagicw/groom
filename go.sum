@@ -23,6 +23,8 @@ github.com/muesli/termenv v0.15.2 h1:GohcuySI0QmI3wN8Ok9PtKGkgkFIk7y6Vpb5PvrY+Wo
 github.com/muesli/termenv v0.15.2/go.mod h1:Epx+iuz8sNs7mNKhxzH4fWXGNpZwUaJKRS1noLXviQ8=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/pspiagicw/demp v0.0.0-20240323063951-e94f9ffb9963 h1:+ST+cIdZ+Yvx9YmHIdy++JRtRia086o88NS0ECVeKPo=
+github.com/pspiagicw/demp v0.0.0-20240323063951-e94f9ffb9963/go.mod h1:C2bBMV5JVEiFB0oQbrAQ4tnRKIp16LXvG61vL4H9QZg=
 github.com/pspiagicw/goreland v0.0.0-20231114040425-9e1a4343f6f4 h1:1I20HwlkaDZeuHnijbELqfswR4NiQ+g+BpOfiHEpNBU=
 github.com/pspiagicw/goreland v0.0.0-20231114040425-9e1a4343f6f4/go.mod h1:w9C97TNLperGU930lN/hc2XuWUlYzPbBUW1OA1ka4DM=
 github.com/pspiagicw/pelp v0.0.0-20240318161701-7448ea2e376e h1:N0ZhzS8AdPstCIV7eti5BOXhen73DjGj0+d393GXWcU=
