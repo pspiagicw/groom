@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added parent directory recursion. `groom` now finds `groom.toml` in the parent directories.
 - Created a companion `neovim` plugin. See [here](https://github.com/pspiagicw/groom.nvim)
 
+### Changed
+- Moved to [`demp`](https://github.com/pspiagicw/demp) for dollar templating instead of hideos custom algorithm.
+
 ## v0.0.1
 
 ### Added
