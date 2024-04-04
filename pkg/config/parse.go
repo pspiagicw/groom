@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"os"
 
 	"github.com/BurntSushi/toml"
@@ -26,30 +25,45 @@ type Config struct {
 	Tasks     map[string]*Task  `toml:"task"`
 }
 
-func readConf() *Config {
-
+func openConfig() *os.File {
 	config, err := os.Open(utils.ConfigFilePath())
 
 	if err != nil {
-		log.Fatalf("Error reading goproject.toml: %q", err)
+		goreland.LogFatal("Error reading groom.toml: %q", err)
 
 	}
 
-	defer config.Close()
+	return config
+}
 
-	decoder := toml.NewDecoder(config)
+func readConf() *Config {
 
-	var read Config
+	configStream := openConfig()
 
-	_, err = decoder.Decode(&read)
+	config := decodeConfig(configStream)
 
-	if err != nil {
-		log.Fatalf("Error parsing toml: %v", err)
-	}
+	configStream.Close()
 
-	return &read
+	return config
 
 }
+func decodeConfig(configStream *os.File) *Config {
+
+	read := new(Config)
+
+	read.Variables = make(map[string]string)
+
+	decoder := toml.NewDecoder(configStream)
+
+	_, err := decoder.Decode(read)
+
+	if err != nil {
+		goreland.LogFatal("Error parsing toml: %v", err)
+	}
+
+	return read
+}
+
 func ParseConfig() *Config {
 
 	config := readConf()
@@ -80,7 +94,9 @@ func resolveTasks(c *Config) {
 func resolveVariables(c *Config) {
 
 	// Add the name as a variable
-	c.Variables["name"] = c.Name
+	if c.Name != "" {
+		c.Variables["name"] = c.Name
+	}
 	// Add other default variables
 	addDefaultVariables(c)
 
