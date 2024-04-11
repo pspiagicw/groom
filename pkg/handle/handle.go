@@ -15,22 +15,20 @@ var handlers = map[string]func(*argparse.Opts){
 	},
 }
 
-func HandleArgs(opts *argparse.Opts) {
+func Handle(opts *argparse.Opts) {
+
 	if opts.ExampleConfig {
 		help.PrintExampleConfig()
 	} else if len(opts.Args) == 0 {
 		tasks.ListTasks(opts)
 	} else {
-		handleCmd(opts)
-	}
-}
-func handleCmd(opts *argparse.Opts) {
-	cmd := opts.Args[0]
-	handleFunc, ok := handlers[cmd]
-	if !ok {
-		tasks.PerformTasks(opts.Args, opts.DryRun)
-	} else {
-		handleFunc(opts)
+		cmd := opts.Args[0]
+		handleFunc, ok := handlers[cmd]
+		if !ok {
+			tasks.PerformTasks(opts.Args, opts.DryRun)
+		} else {
+			handleFunc(opts)
+		}
 	}
 
 }

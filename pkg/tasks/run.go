@@ -20,6 +20,7 @@ func runCommands(task *config.Task) {
 }
 func runCommand(environment []string, command string, name string) {
 	components, err := shellwords.Split(command)
+
 	if err != nil {
 		goreland.LogFatal("Error parsing command [%s] for task [%s]", command, name)
 	}

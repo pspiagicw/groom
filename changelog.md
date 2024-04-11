@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Moved to [`demp`](https://github.com/pspiagicw/demp) for dollar templating instead of hideos custom algorithm.
-- Moved to ['shellwords'](https://github.com/buildkite/shellwords) for splitting shell commands instead of custom algorithm.
+- Moved to [`shellwords`](https://github.com/buildkite/shellwords) for splitting shell commands instead of custom algorithm.
 
 ## v0.0.1
 

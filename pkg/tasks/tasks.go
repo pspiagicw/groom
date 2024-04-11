@@ -9,13 +9,32 @@ func PerformTasks(tasks []string, dryRun bool) {
 
 	groomConfig := config.ParseConfig()
 
+	checkTasks(tasks, groomConfig)
+
 	executeTasks(tasks, groomConfig.Tasks, dryRun)
 }
 
-func checkTask(task *config.Task) {
-	if task.Command == "" && len(task.Commands) == 0 {
-		goreland.LogFatal("No command/commands specified for [%s]!", task.Name)
+func checkTasks(tasks []string, groomConfig *config.Config) {
+	for _, name := range tasks {
+		task, ok := groomConfig.Tasks[name]
+		if !ok {
+			goreland.LogFatal("No task named %s", name)
+		}
+
+		for _, dep := range task.Depends {
+			if _, ok := groomConfig.Tasks[dep]; !ok {
+				goreland.LogFatal("Task %s depends on %s, which does not exist", name, dep)
+			}
+		}
+
+		if task.Command == "" && len(task.Commands) == 0 {
+			goreland.LogFatal("No command/commands specified for [%s]!", task.Name)
+		}
+
 	}
+}
+
+func sanitizeTask(task *config.Task) {
 
 	if len(task.Commands) == 0 {
 		task.Commands = []string{
@@ -26,13 +45,10 @@ func checkTask(task *config.Task) {
 
 func getTask(name string, tasks map[string]*config.Task) *config.Task {
 
-	task, ok := tasks[name]
+	task := tasks[name]
 
-	if !ok {
-		goreland.LogFatal("No task named %s", name)
-	}
+	sanitizeTask(task)
 
-	checkTask(task)
 	return task
 
 }
