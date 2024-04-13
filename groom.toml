@@ -18,7 +18,6 @@ depends = [
 description = "Format the project"
 command = "go fmt ./..."
 
-
 [task.clean]
 description = "Clean the repository"
 command = "rm -rf ${build-dir}"

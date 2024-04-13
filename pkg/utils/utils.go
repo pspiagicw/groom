@@ -51,7 +51,7 @@ func findConfig(dir string) string {
 func changeDir(dir string) {
 	err := os.Chdir(dir)
 	if err != nil {
-		goreland.LogFatal("Error changing working directory %v")
+		goreland.LogFatal("Error changing working directory %v", err)
 	}
 }
 func noConfigFound() {

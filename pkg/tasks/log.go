@@ -14,12 +14,6 @@ func logTask(task *config.Task) {
 	fmt.Printf(utils.LOG_PREFIX+"%s =>"+environmentString+" %s\n", task.Name, task.Command)
 }
 
-func logCommand(environment []string, command string, name string) {
-	environmentString := getEnvPrefix(environment)
-
-	fmt.Printf(utils.LOG_PREFIX+"%s =>"+environmentString+" %s\n", name, command)
-}
-
 func getEnvPrefix(env []string) string {
 
 	var out bytes.Buffer

@@ -1,40 +1,99 @@
 package tasks
 
 import (
+	"slices"
+
+	"github.com/buildkite/shellwords"
 	"github.com/pspiagicw/goreland"
+	"github.com/pspiagicw/groom/pkg/argparse"
 	"github.com/pspiagicw/groom/pkg/config"
+	"github.com/pspiagicw/groom/pkg/execute"
 )
 
-func PerformTasks(tasks []string, dryRun bool) {
+func PerformTasks(opts *argparse.Opts) {
 
 	groomConfig := config.ParseConfig()
 
-	checkTasks(tasks, groomConfig)
+	taskList := getTaskList(opts, groomConfig)
 
-	executeTasks(tasks, groomConfig.Tasks, dryRun)
+	taskList = sort(taskList, groomConfig)
+
+	executeTasks(taskList, opts)
+}
+func sort(tasks []*config.Task, groomConfig *config.Config) []*config.Task {
+
+	seen := make(map[string]bool)
+
+	stack := tasks
+
+	order := []*config.Task{}
+
+	for len(stack) > 0 {
+		current := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		if seen[current.Name] {
+			continue
+		}
+		seen[current.Name] = true
+
+		for _, dep := range current.Depends {
+			dependency := getTask(dep, groomConfig)
+
+			if dependency == nil {
+				goreland.LogFatal("Task %s depends on %s, which does not exist", current.Name, dep)
+			}
+
+			if !seen[dependency.Name] {
+				stack = append(stack, dependency)
+			}
+		}
+		order = append(order, current)
+	}
+
+	slices.Reverse(order)
+
+	return order
 }
 
-func checkTasks(tasks []string, groomConfig *config.Config) {
-	for _, name := range tasks {
-		task, ok := groomConfig.Tasks[name]
-		if !ok {
+func getTaskList(opts *argparse.Opts, groomConfig *config.Config) []*config.Task {
+	requestedTasks := opts.Args
+
+	currentTasks := []*config.Task{}
+
+	for _, name := range requestedTasks {
+
+		task := getTask(name, groomConfig)
+
+		if task == nil {
 			goreland.LogFatal("No task named %s", name)
 		}
 
-		for _, dep := range task.Depends {
-			if _, ok := groomConfig.Tasks[dep]; !ok {
-				goreland.LogFatal("Task %s depends on %s, which does not exist", name, dep)
-			}
-		}
-
-		if task.Command == "" && len(task.Commands) == 0 {
-			goreland.LogFatal("No command/commands specified for [%s]!", task.Name)
-		}
+		currentTasks = append(currentTasks, task)
 
 	}
+
+	return currentTasks
+}
+
+func getTask(name string, groomConfig *config.Config) *config.Task {
+
+	task, ok := groomConfig.Tasks[name]
+
+	if !ok {
+		return nil
+	}
+
+	sanitizeTask(task)
+
+	return task
 }
 
 func sanitizeTask(task *config.Task) {
+
+	if task.Command == "" && len(task.Commands) == 0 {
+		goreland.LogFatal("No command/commands specified for [%s]!", task.Name)
+	}
 
 	if len(task.Commands) == 0 {
 		task.Commands = []string{
@@ -43,24 +102,20 @@ func sanitizeTask(task *config.Task) {
 	}
 }
 
-func getTask(name string, tasks map[string]*config.Task) *config.Task {
-
-	task := tasks[name]
-
-	sanitizeTask(task)
-
-	return task
-
-}
-
-func executeTasks(tasks []string, taskList map[string]*config.Task, dryRun bool) {
-	for _, name := range tasks {
-		task := getTask(name, taskList)
-		if !dryRun {
-			runDependencies(task, taskList)
-			runCommands(task)
-		} else {
-			logTask(task)
+func executeTasks(taskList []*config.Task, opts *argparse.Opts) {
+	for _, task := range taskList {
+		if !opts.DryRun {
+			runCommand(task)
 		}
+		logTask(task)
 	}
+}
+func runCommand(task *config.Task) {
+	components, err := shellwords.Split(task.Command)
+
+	if err != nil {
+		goreland.LogFatal("Error parsing command [%s] for task [%s]", task.Command, task.Name)
+	}
+
+	execute.Execute(components, task.Environment)
 }

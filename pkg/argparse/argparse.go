@@ -6,11 +6,16 @@ import (
 )
 
 type Opts struct {
-	SimpleListing bool
-	Args          []string
-	Version       string
+	Args    []string
+	Version string
+
 	ExampleConfig bool
-	DryRun        bool
+
+	// Execution flag
+	DryRun bool
+
+	// Listing Flag
+	SimpleListing bool
 }
 
 func ParseArguments(version string) *Opts {

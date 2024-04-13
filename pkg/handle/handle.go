@@ -1,6 +1,8 @@
 package handle
 
 import (
+	"os"
+
 	"github.com/pspiagicw/groom/pkg/argparse"
 	"github.com/pspiagicw/groom/pkg/help"
 	"github.com/pspiagicw/groom/pkg/tasks"
@@ -17,18 +19,29 @@ var handlers = map[string]func(*argparse.Opts){
 
 func Handle(opts *argparse.Opts) {
 
-	if opts.ExampleConfig {
-		help.PrintExampleConfig()
-	} else if len(opts.Args) == 0 {
-		tasks.ListTasks(opts)
+	checkExampleConfig(opts)
+	checkArgLen(opts)
+
+	cmd := opts.Args[0]
+
+	handleFunc := handlers[cmd]
+
+	if handleFunc == nil {
+		tasks.PerformTasks(opts)
 	} else {
-		cmd := opts.Args[0]
-		handleFunc, ok := handlers[cmd]
-		if !ok {
-			tasks.PerformTasks(opts.Args, opts.DryRun)
-		} else {
-			handleFunc(opts)
-		}
+		handleFunc(opts)
 	}
 
+}
+func checkArgLen(opts *argparse.Opts) {
+	if len(opts.Args) == 0 {
+		tasks.ListTasks(opts)
+		os.Exit(0)
+	}
+}
+func checkExampleConfig(opts *argparse.Opts) {
+	if opts.ExampleConfig {
+		help.PrintExampleConfig()
+		os.Exit(0)
+	}
 }
