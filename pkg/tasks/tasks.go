@@ -100,21 +100,32 @@ func sanitizeTask(task *config.Task) {
 			task.Command,
 		}
 	}
+
+	task.Command = ""
 }
 
 func executeTasks(taskList []*config.Task, opts *argparse.Opts) {
 	for _, task := range taskList {
+		logTask(task)
 		if !opts.DryRun {
 			runCommand(task)
 		}
-		logTask(task)
 	}
 }
 func runCommand(task *config.Task) {
-	components, err := shellwords.Split(task.Command)
+	for _, command := range task.Commands {
+		run(task, command)
+	}
+}
+func run(task *config.Task, command string) {
+	components, err := shellwords.Split(command)
 
 	if err != nil {
 		goreland.LogFatal("Error parsing command [%s] for task [%s]", task.Command, task.Name)
+	}
+
+	if len(components) == 0 {
+		goreland.LogFatal("No command specified for task [%s]", task.Name)
 	}
 
 	execute.Execute(components, task.Environment)
