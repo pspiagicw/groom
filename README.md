@@ -52,6 +52,7 @@ commands = [
 # Tasks can contain dependencies, and environment variables defined
 [task.test]
 environment = [ "TESTS=1" ]
+directory = "test"
 command = "python -m unittest"
 depends = [
     "format"
@@ -64,6 +65,48 @@ command = "go fmt ./..."
 > You can run `groom --example-config` to get a working example config.
 
 ![help](./gifs/help.gif)
+
+### Task
+
+A `task` in `groom` needs a name and atleast a single command. 
+
+This can be a task.
+
+```toml
+[task.some-name]
+command = "echo 'Sample Task'"
+```
+
+It can contain
+- Environment variables
+    - List of environment variables with it's values as string.
+- Task dependencies
+    - List of dependencies which should be valid groom tasks.
+- Multiple commands
+    - List of commands to execute `sequentially`.
+    - When `command` and `commands` both exist. `commands` takes precedence.
+- Description
+    - A single line describing the purpose of the task.
+- Directory
+    - A absolute path to change the working directory before executing the commands.
+
+```toml
+[task.build]
+depends = [
+    "format"
+]
+description = "Build the project"
+directory = "src"
+environment = ["DEBUG_BUILD=0"]
+commands = [
+    "gcc -c main.o main.c",
+    "gcc -c game.o game.c",
+    "gcc -o $name game.o main.o"
+]
+
+```
+
+> Everything except `name` and `command` are optional
 
 ### List
 

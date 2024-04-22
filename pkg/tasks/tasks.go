@@ -1,6 +1,7 @@
 package tasks
 
 import (
+	"os"
 	"slices"
 
 	"github.com/buildkite/shellwords"
@@ -41,7 +42,7 @@ func sort(tasks []*config.Task, groomConfig *config.Config) []*config.Task {
 			dependency := getTask(dep, groomConfig)
 
 			if dependency == nil {
-				goreland.LogFatal("Task %s depends on %s, which does not exist", current.Name, dep)
+				goreland.LogFatal("Task [%s] depends on [%s], which does not exist", current.Name, dep)
 			}
 
 			if !seen[dependency.Name] {
@@ -108,14 +109,40 @@ func executeTasks(taskList []*config.Task, opts *argparse.Opts) {
 	for _, task := range taskList {
 		logTask(task)
 		if !opts.DryRun {
-			runCommand(task)
+			runTask(task)
 		}
 	}
 }
-func runCommand(task *config.Task) {
+func pushDirectory(task *config.Task) {
+	if task.Directory != "" {
+		curdir, err := os.Getwd()
+		if err != nil {
+			goreland.LogFatal("Error changing directory to %s: %s", task.Directory, err)
+		}
+		err = os.Chdir(task.Directory)
+		if err != nil {
+			goreland.LogFatal("Error changing directory to %s: %s", task.Directory, err)
+		}
+		task.Directory = curdir
+	}
+}
+func popDirectory(task *config.Task) {
+	if task.Directory != "" {
+		err := os.Chdir(task.Directory)
+		if err != nil {
+			goreland.LogFatal("Error changing directory to %s: %s", task.Directory, err)
+		}
+	}
+}
+func runTask(task *config.Task) {
+
+	pushDirectory(task)
+
 	for _, command := range task.Commands {
 		run(task, command)
 	}
+
+	popDirectory(task)
 }
 func run(task *config.Task, command string) {
 	components, err := shellwords.Split(command)

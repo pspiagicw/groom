@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added the `directory` option to change directory before executing a task.
 - Help Printing.
 - Added a `--simple` flag to task listing.
 - Added parent directory recursion. `groom` now finds `groom.toml` in the parent directories.
