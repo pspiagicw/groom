@@ -12,7 +12,7 @@ description = "Build the project"
 command = 'go build -ldflags "$ldflags" -o $name ${main-file}'
 environment = [ "CGO_ENABLED=0" ]
 depends = [
-    "format"
+    "format",
 ]
 
 [task.format]

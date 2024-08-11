@@ -145,15 +145,21 @@ func runTask(task *config.Task) {
 	popDirectory(task)
 }
 func run(task *config.Task, command string) {
-	components, err := shellwords.Split(command)
+	var cmd []string
+	if task.Shell == "bash" {
+		cmd = []string{"bash", "-c", command}
+	} else {
+		components, err := shellwords.Split(command)
 
-	if err != nil {
-		goreland.LogFatal("Error parsing command [%s] for task [%s]", task.Command, task.Name)
+		if err != nil {
+			goreland.LogFatal("Error parsing command [%s] for task [%s]", task.Command, task.Name)
+		}
+
+		if len(components) == 0 {
+			goreland.LogFatal("No command specified for task [%s]", task.Name)
+		}
+
+		cmd = components
 	}
-
-	if len(components) == 0 {
-		goreland.LogFatal("No command specified for task [%s]", task.Name)
-	}
-
-	execute.Execute(components, task.Environment)
+	execute.Execute(cmd, task.Environment)
 }
