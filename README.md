@@ -69,6 +69,7 @@ command = "go fmt ./..."
 # As opposed to executed directly
 # Useful for shell features like globbing
 [task.tags]
+shell = "bash"
 command = "ctags *.go"
 # This becomes "bash -c 'ctags *.go'"
 ```

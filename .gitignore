@@ -1,2 +1,5 @@
 groom
 build
+.direnv
+
+dist/
